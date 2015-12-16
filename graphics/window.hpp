@@ -1,11 +1,18 @@
 #ifndef graphics_window_hpp
 #define graphics_window_hpp
 
-#include <windows.h>
+#include <string>
 
 class Window {
 	public:
-		HWND handle;
-}
+		Window(std::string);
+		void drawBubble(std::string, int, int, int, int);
+		bool process();
+		void setPaintCallback(void(*)(Window*));
+		~Window();
+
+	private:
+
+};
 
 #endif
