@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-DSFML_STATIC -I lib\SFML
-LFLAGS=-static -L lib/SFML/bin -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lsfml-main -lwinmm -lopengl32 -lgdi32
+CFLAGS=
+LFLAGS=-static
 
 all: bin/drowsymapper.exe
 
