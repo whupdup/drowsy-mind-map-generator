@@ -12,6 +12,8 @@ class MapNode {
 		std::vector<MapNode*> children;
 };
 
+unsigned int getNodeComplexity(MapNode*);
+
 class MapReader {
 	public:
 		static MapReader *openFile(std::string);
