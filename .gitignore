@@ -6,6 +6,7 @@
 
 # Vim files
 *.swp
+*~
 
 # Precompiled Headers
 *.gch
@@ -15,15 +16,6 @@
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
 
 # Executables
 *.exe
