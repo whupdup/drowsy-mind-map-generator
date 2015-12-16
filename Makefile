@@ -1,7 +1,7 @@
 all: drowsymapper.exe
 
 run: drowsymapper.exe
-	drowsymapper.exe
+	./drowsymapper.exe
 
 drowsymapper.exe: main.o reader.o
 	g++ main.o reader.o -o drowsymapper.exe
