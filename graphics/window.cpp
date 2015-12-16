@@ -6,20 +6,22 @@
 #include <windows.h>
 #include <Wingdi.h>
 
-static const int FONT_SIZE = 20;
+static const int FONT_SIZE = 16;
 static const char szAppName[] = "myWindowClass";
 static MSG Msg;
 static void (*paintCallback)(Window*);
 static Window *currentWindow;
+static HWND lhWnd;
 
 void blankCallback(Window *window) { }
 HDC *currentDC;
 
-void Window::getBubbleSize(std::string text, int *x, int *y) {
+void Window::getBubbleSize(std::string text, unsigned int complexity, int *x, 
+		int *y) {
 	SIZE size;
 	TEXTMETRIC metric;
-	HFONT hFont = CreateFont(FONT_SIZE,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,
-			DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
+	HFONT hFont = CreateFont(FONT_SIZE+complexity*2,0,0,0,FW_NORMAL,FALSE,FALSE,
+			FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
 			NONANTIALIASED_QUALITY,DEFAULT_PITCH,TEXT("Arial"));
 	SelectObject(*currentDC, hFont);
 	SetTextCharacterExtra(*currentDC, 0);
@@ -27,14 +29,24 @@ void Window::getBubbleSize(std::string text, int *x, int *y) {
 	GetTextExtentPoint(*currentDC, text.c_str(), text.length(), &size);
 	*x = (size.cx + metric.tmOverhang) * 1.05 + 20;
 	*y = (FONT_SIZE) * 1.4;
+	DeleteObject(hFont);
 }
 
-void Window::drawBubble(std::string text, int x1, int y1, int x2, int y2) {
-	// TODO: Calculate size automatically and return it
-	// Use that later to determine how to position bubbles
-	// https://msdn.microsoft.com/en-us/library/windows/desktop/dd144938(v=vs.85).aspx
+void Window::resize(int x, int y) {
+	SetWindowPos(lhWnd, NULL, 0, 0, x, y, SWP_SHOWWINDOW);
+}
 
-	HPEN hPen = CreatePen(PS_SOLID, 3, RGB(50, 50, 50));
+void Window::drawLine(int x1, int y1, int x2, int y2) {
+	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(50, 50, 50));
+	SelectObject(*currentDC, hPen);
+	MoveToEx(*currentDC, x1, y1, NULL);
+	LineTo(*currentDC, x2, y2);
+	DeleteObject(hPen);
+}
+
+void Window::drawBubble(std::string text, unsigned int complexity, int x1, 
+		int y1, int x2, int y2) {
+	HPEN hPen = CreatePen(PS_SOLID, 1, RGB(50, 50, 50));
 	HBRUSH hBrush = CreateSolidBrush(RGB(127, 127, 127));
 	SelectObject(*currentDC, hPen);
 	SelectObject(*currentDC, hBrush);
@@ -48,17 +60,20 @@ void Window::drawBubble(std::string text, int x1, int y1, int x2, int y2) {
 	rect.bottom = y2 + y1;
 	SetTextColor(*currentDC, RGB(0, 0, 0));
 	SetBkMode(*currentDC, TRANSPARENT);
-	HFONT hFont = CreateFont(FONT_SIZE,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,
-			DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
+	HFONT hFont = CreateFont(FONT_SIZE + complexity*2,0,0,0,FW_NORMAL,FALSE,
+			FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
 			NONANTIALIASED_QUALITY,DEFAULT_PITCH,TEXT("Arial"));
 	SelectObject(*currentDC, hFont);
 
 	DrawText(*currentDC, text.c_str(), text.length(), &rect, 
 			DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	DeleteObject(hFont);
 }
 
 LRESULT CALLBACK WindProcedure(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
+	lhWnd = hWnd;
 	HDC hDC;
 	PAINTSTRUCT Ps;
 	HBRUSH newBrush;

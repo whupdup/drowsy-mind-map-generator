@@ -8,7 +8,7 @@ run: bin/drowsymapper.exe
 	./bin/drowsymapper.exe
 
 bin/drowsymapper.exe: bin/main.o bin/reader.o bin/mapmeasure.o bin/window.o
-	$(CC) -L lib/SFML/bin bin/main.o bin/mapmeasure.o bin/reader.o bin/window.o -o bin/drowsymapper.exe $(LFLAGS)
+	$(CC) bin/main.o bin/mapmeasure.o bin/reader.o bin/window.o -o bin/drowsymapper.exe $(LFLAGS)
 
 bin:
 	mkdir bin

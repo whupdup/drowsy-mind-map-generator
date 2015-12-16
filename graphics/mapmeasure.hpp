@@ -4,6 +4,10 @@
 #include "../reader/reader.hpp"
 #include "window.hpp"
 
+#ifndef PI
+#define PI 3.14159265
+#endif
+
 class MapMeasure {
 	public:
 		unsigned int width;
@@ -13,5 +17,7 @@ class MapMeasure {
 };
 
 MapMeasure measureMap(Window*, MapNode*);
+float getBranchLength(Window*, MapNode*);
+int getBiggestNodeWidth(Window*, MapNode*);
 
 #endif

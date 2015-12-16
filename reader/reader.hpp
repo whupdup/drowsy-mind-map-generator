@@ -12,8 +12,6 @@ class MapNode {
 		std::vector<MapNode*> children;
 };
 
-unsigned int getNodeComplexity(MapNode*);
-
 class MapReader {
 	public:
 		static MapReader *openFile(std::string);
@@ -25,5 +23,7 @@ class MapReader {
 	private:
 		MapReader();
 };
+
+#include "../utils/nodecounter.hpp"
 
 #endif
