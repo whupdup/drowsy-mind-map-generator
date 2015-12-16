@@ -1,0 +1,18 @@
+drowsy mind map generator
+	positioning
+		searches end nodes first to get the necessary spacing for the branches
+		size of text depends on range of values
+			smallest node should be 11pt and the rest of the nodes should go up from that
+	file format
+		there should be a root name with lines for each node
+		a node should be demoted by tabs on the left size of the line
+			each tab is one demotion from the base node(s)
+		all ending whitespaces is trimmed
+		all whitespace-only lines are ignored
+	appearance
+		all the text for nodes should be in the foreground of a gray circle
+			the gray circle should have a darker grey outline
+			the text should be darker than the grey outline
+		branches should be the same color as the outline of the circle
+
+
