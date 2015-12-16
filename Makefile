@@ -1,13 +1,13 @@
-all: drowsymapper.exe
+all: bin/drowsymapper.exe
 
-run: drowsymapper.exe
-	./drowsymapper.exe
+run: bin/drowsymapper.exe
+	./bin/drowsymapper.exe
 
-drowsymapper.exe: main.o reader.o
-	g++ main.o reader.o -o drowsymapper.exe
+bin/drowsymapper.exe: bin/main.o bin/reader.o
+	g++ bin/main.o bin/reader.o -static -o bin/drowsymapper.exe
 
-main.o: main.cpp reader.hpp
-	g++ -c main.cpp
+main.o: main.cpp reader/reader.hpp
+	g++ -c main.cpp -o bin/main.o
 
-reader.o: reader.cpp reader.hpp
-	g++ -c reader.cpp
+reader.o: reader/reader.cpp reader/reader.hpp
+	g++ -c reader/reader.cpp -o bin/reader.o

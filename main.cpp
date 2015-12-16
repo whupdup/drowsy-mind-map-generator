@@ -1,5 +1,5 @@
 #include <iostream>
-#include "reader.hpp"
+#include "reader/reader.hpp"
 
 void debugTree(MapNode *startNode) {
 	for (unsigned int i = 0UL; i < startNode->level; ++i) {
@@ -13,11 +13,7 @@ void debugTree(MapNode *startNode) {
 }
 
 int main(int argc, char **argv) {
-	std::cout << "Loading." << std::endl;
-
 	MapReader *mapReader = MapReader::openFile(std::string("demo map.txt"));
-	
-	std::cout << "Loaded." << std::endl;
 
 	for (unsigned int i = 0; i < mapReader->bases.size(); ++i) {
 		debugTree(mapReader->bases.at(i));
