@@ -50,7 +50,7 @@ void Window::drawBubble(std::string text, int x1, int y1, int x2, int y2) {
 	SetBkMode(*currentDC, TRANSPARENT);
 	HFONT hFont = CreateFont(FONT_SIZE,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,
 			DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
-			DEFAULT_QUALITY,DEFAULT_PITCH,TEXT("Arial"));
+			NONANTIALIASED_QUALITY,DEFAULT_PITCH,TEXT("Arial"));
 	SelectObject(*currentDC, hFont);
 
 	DrawText(*currentDC, text.c_str(), text.length(), &rect, 
