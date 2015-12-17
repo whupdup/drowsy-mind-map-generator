@@ -11,13 +11,11 @@ MapReader *mapReader;
 bool beenResized = false;
 
 float mdf(float a, float b) {
-	while (a > b)
-		a -= b;
-	return a;
+	return a - floor(a / b) * b;
 }
 
 void paintTree(Window *window, MapNode *node, unsigned int complexity, 
-		int x=-1, int y=-1) {
+		int x=-1, int y=-1, int offsX=0, int offsY=0) {
 	if (x == -1 && y == -1) {
 		MapMeasure mapSize(measureMap(window, node));
 		x = mapSize.width*2.5;
@@ -41,12 +39,12 @@ void paintTree(Window *window, MapNode *node, unsigned int complexity,
 		for (unsigned int i = 0; i < childCount; ++i) {
 			childX = sin(angle*i + off)*dist + x;
 			childY = cos(angle*i + off)*dist + y;
-			window->drawLine(childX, childY, x, y);
-			paintTree(window, node->children.at(i), complexity - 1, childX, childY);
+			window->drawLine(childX - offsX, childY - offsY, x - offsX, y - offsY);
+			paintTree(window, node->children.at(i), complexity - 1, childX, childY, offsX, offsY);
 		}
 	}
 
-	window->drawBubble(node->text, complexity, x - sizeX/2, y - sizeY/2, sizeX, sizeY);
+	window->drawBubble(node->text, complexity, x - sizeX/2 - offsX, y - sizeY/2 - offsY, sizeX, sizeY);
 }
 
 static int seed;
@@ -55,7 +53,7 @@ void paint(Window *window) {
 	srand(seed);
 	MapNode *node = mapReader->bases.at(0);
 	int complexity = getNodeComplexity(node);
-	paintTree(window, node, complexity);
+	paintTree(window, node, complexity, -1, -1, window->offsetX, window->offsetY);
 }
 
 int main(int argc, char **argv) {
@@ -75,7 +73,11 @@ int main(int argc, char **argv) {
 	Window *window = new Window(std::string("Drowsy Mind Map Generator"));
 	window->setPaintCallback(paint);
 
-	while (window->process());
+	while (window->process())
+	{
+		if (window->mouse1Down)
+			window->repaint();
+	}
 
 	return 0;
 }

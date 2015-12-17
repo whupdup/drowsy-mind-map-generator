@@ -4,7 +4,10 @@
 #define _WIN_WINNT 0x0A00
 
 #include <windows.h>
+#include <windowsx.h>
 #include <Wingdi.h>
+
+#include <iostream>
 
 static const int FONT_SIZE = 16;
 static const char szAppName[] = "myWindowClass";
@@ -81,6 +84,14 @@ LRESULT CALLBACK WindProcedure(HWND hWnd, UINT Msg,
 
 	switch(Msg)
 	{
+		case WM_LBUTTONDOWN:
+			currentWindow->mouse1Down = true;
+			currentWindow->startPosX = GET_X_LPARAM(lParam);
+			currentWindow->startPosY =  GET_Y_LPARAM(lParam);
+			break;
+		case WM_LBUTTONUP:
+			currentWindow->mouse1Down = false;
+			break;
 		case WM_PAINT:
 			hDC = BeginPaint(hWnd, &Ps);
 			currentDC = &hDC;
@@ -97,6 +108,16 @@ LRESULT CALLBACK WindProcedure(HWND hWnd, UINT Msg,
 }
 
 Window::Window(std::string name) {
+	mouse1Down = false; // "non-static data member intializers only available with -std=c++11"
+	mousePosX = 0;
+	mousePosY = 0;
+
+	startPosX = 0;
+	startPosY = 0;
+
+	offsetX = 0;
+	offsetY = 0;
+
 	WNDCLASSEX WndCls;
 
 	WndCls.cbSize        = sizeof(WndCls);
@@ -116,7 +137,7 @@ Window::Window(std::string name) {
 	CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
 			szAppName, name.c_str(),
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-			CW_USEDEFAULT, CW_USEDEFAULT, 420, 220,
+			CW_USEDEFAULT, CW_USEDEFAULT, Window::WIDTH, Window::HEIGHT,
 			NULL, NULL, NULL, NULL);
 
 	paintCallback = blankCallback;
@@ -127,8 +148,26 @@ void Window::setPaintCallback(void(*callback)(Window*)) {
 	paintCallback = callback;
 }
 
+void Window::repaint()
+{
+	currentWindow->offsetX = currentWindow->startPosX - currentWindow->mousePosX;
+	currentWindow->offsetY = currentWindow->startPosY - currentWindow->mousePosY;
+
+	RedrawWindow(lhWnd, NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE | RDW_ERASE);
+	//SendMessage(lhWnd, WM_PAINT, 0, 0);
+}
+
 bool Window::process() {
-	bool cont = GetMessage(&Msg, NULL, 0, 0);
+	bool cont = GetMessage(&Msg, NULL, 0, 0) > 0;
+
+	POINT p;
+
+	if (GetCursorPos(&p))
+	{
+		ScreenToClient(lhWnd, &p);
+		mousePosX = p.x;
+		mousePosY = p.y;
+	}
 
 	if (cont) {
 		TranslateMessage(&Msg);

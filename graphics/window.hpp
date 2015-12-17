@@ -12,8 +12,15 @@ class Window {
 		bool process();
 		void resize(int x, int y);
 		void setPaintCallback(void(*)(Window*));
+		void repaint();
 		~Window();
 
+		static const int WIDTH = 420, HEIGHT = 220;
+		
+		bool mouse1Down;
+		int mousePosX, mousePosY;
+		int startPosX, startPosY;
+		int offsetX, offsetY;
 	private:
 
 };
